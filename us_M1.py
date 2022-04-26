@@ -7,22 +7,17 @@ import sys
 
 tempo = 0.09
 
+#leemos configuración
 f = open(sys.argv[1])
 port = int(f.readline())
 dispositivos = f.readline().split(';')
 print(dispositivos)
 
-
-
+#preparamos socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_address = ('158.49.247.198', port)
 print('starting up on {} port {}'.format(*server_address))
 sock.bind(server_address)
-
-
-
-
-
 # Listen for incoming connections
 sock.listen(1)
 
@@ -31,12 +26,10 @@ while True:
     print('waiting for a connection')
     connection, client_address = sock.accept()
     try:
-
         print('connection from', client_address)
-        print(dispositivos)
         serials=[]
+        #abrimos serials
         for d in dispositivos[1::2]:
-            print(d)
             ser = serial.Serial(
                         port=str(d),
                         baudrate=9600,
@@ -53,7 +46,9 @@ while True:
         start_time = time.time()
         while(True):
             sendata = ""
+            #leemos todos los serials
             for s in range(len(serials)):
+                ##leemos
                 stringDistance =serials[s].readline()
                 #print(stringDistance)
                 if len(stringDistance)>4:
@@ -66,8 +61,10 @@ while True:
                     else:
                         distance = stringDistance[2] + stringDistance[1]*255
                         print(dispositivos[s*2], ' distance =', distance)
+                        #formato IDsensor1;DistanciasSensor1:IDsensorn;DistanciasSensorn:
                         sendata = sendata + str(dispositivos[s*2]) + ";" + str(distance) + ":"
 
+            #enviamos datos si tenemos algun sensor
             if sendata != "":
                 print("send", sendata)
                 connection.send(sendata.encode())

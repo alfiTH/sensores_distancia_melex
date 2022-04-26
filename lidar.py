@@ -7,28 +7,29 @@ import sys
 
 tempo = 0.0087
 
+#leemos configuración
 f = open(sys.argv[1])
 port = int(f.readline())
 dispositivos = f.readline().split(';')
 print(dispositivos)
 
+#preparamos socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_address = ('158.49.247.198', port)
 print('starting up on {} port {}'.format(*server_address))
 sock.bind(server_address)
-
-
-
 # Listen for incoming connections
 sock.listen(1)
+
 while True:
     # Wait for a connection
     print('waiting for a connection')
     connection, client_address = sock.accept()
     try:
+        print('connection from', client_address)
         serials=[]
+        #abrimos serials
         for d in dispositivos[1::2]:
-            print(d)
             ser = serial.Serial(
                         port=str(d),
                         baudrate=115200,
@@ -45,7 +46,9 @@ while True:
         start_time = time.time()
         while(True):
             sendata = ""
+             #leemos todos los serials
             for s in range(len(serials)):
+                ##leemos
                 stringDistance =serials[s].readline()
                 #print(stringDistance)
                 if len(stringDistance)>9:
@@ -61,10 +64,12 @@ while True:
                             print("************ERROR DE LUZ*********")
                         else:
                             distance = (stringDistance[2] + stringDistance[3]*255)*10
-                            tem = stringDistance[6] + stringDistance[7]*255
+                            tem = (stringDistance[6] + stringDistance[7]*255)/100
                             print(dispositivos[s*2],' data: distance =', distance," exposure =", luz," temperature =", tem)
+                            #formato IDsensor1;DistanciasSensor1;exposicionSensor1;TemperaturaSensor1:IDsensorn;DistanciasSensorn;exposicionSensorn;TemperaturaSensorn:
                             sendata = sendata + str(dispositivos[s*2]) + ";" + str(distance) + ";" + str(luz) + ";" + str(tem) + ":"
 
+            #enviamos datos si tenemos algun sensor
             if sendata != "":
                 print("send", sendata)
                 connection.send(sendata.encode())
@@ -75,9 +80,11 @@ while True:
     except:
         # Clean up the connection
         print(sys.exc_info()[0])
+
         for s in serials:
             print ("cerramos ", s)
             s.close()
+
         print("cerramos ", connection)
         connection.close()
     
