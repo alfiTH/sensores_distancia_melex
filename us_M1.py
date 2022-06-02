@@ -9,13 +9,14 @@ tempo = 0.09
 
 #leemos configuración
 f = open(sys.argv[1])
+ip = f.readline()
 port = int(f.readline())
-dispositivos = f.readline().split(';')
+dispositivos = f.readline().strip('\n').split(';')
 print(dispositivos)
 
 #preparamos socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_address = ('158.49.247.198', port)
+server_address = (ip, port)
 print('starting up on {} port {}'.format(*server_address))
 sock.bind(server_address)
 # Listen for incoming connections
