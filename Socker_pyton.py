@@ -30,11 +30,16 @@ if __name__ == '__main__':
         #creamos dicionario
         sensores = manager.dict()
         #creamos procesos de comunicación por socket
-        p = Process(target=com_socket, args=('127.0.0.1', 2015,sensores))
-        p2 = Process(target=com_socket, args=('127.0.0.1', 2001,sensores))
+        p = Process(target=com_socket, args=('192.168.50.40', 2001,sensores))
+        p2 = Process(target=com_socket, args=('192.168.50.41', 2001, sensores))
+        p3 = Process(target=com_socket, args=('192.168.50.42', 2002,sensores))
+       # p4 = Process(target=com_socket, args=('192.168.50.43', 2002,sensores))
+
         #arrancamos los procesos
         p.start()
         p2.start()
+        p3.start()
+        #p4.start()
         while(True): 
             # start_time = time.time()  
             print('sensores =', sensores)
