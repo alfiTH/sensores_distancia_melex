@@ -59,10 +59,12 @@ while True:
                 elif stringDistance[0] == stringDistance[1] and stringDistance[0] == 89:
                     if ((sum(stringDistance)-stringDistance[8])%256) != stringDistance[8]:
                         print("**********ERROR CHECKSUM************")
+                        sendata = sendata + str(dispositivos[s*2]) +  ";NaN;NaN;NaN:"
                     else:
                         luz = stringDistance[4] + stringDistance[5]*255
                         if (100>luz or luz==65535):
                             print("************ERROR DE LUZ*********")
+                            sendata = sendata + str(dispositivos[s*2]) +  ";NaN;NaN;NaN:"
                         else:
                             distance = (stringDistance[2] + stringDistance[3]*255)*10
                             tem = (stringDistance[6] + stringDistance[7]*255)/100

@@ -59,11 +59,16 @@ while True:
                 elif stringDistance[0] == 255:  
                     if (stringDistance[2]+stringDistance[1]+stringDistance[0])%256 != stringDistance[3]:
                         print("**********ERROR CHECKSUM************")
+                        sendata = sendata + str(dispositivos[s*2]) +  ";NaN:"
                     else:
                         distance = stringDistance[2] + stringDistance[1]*255
-                        print(dispositivos[s*2], ' distance =', distance)
-                        #formato IDsensor1;DistanciasSensor1:IDsensorn;DistanciasSensorn:
-                        sendata = sendata + str(dispositivos[s*2]) + ";" + str(distance) + ":"
+                        if(distance==0):
+                            print("**********ERROR MEDICION************")
+                            sendata = sendata + str(dispositivos[s*2]) +  ";NaN:"
+                        else:
+                            print(dispositivos[s*2], ' distance =', distance)
+                            #formato IDsensor1;DistanciasSensor1:IDsensorn;DistanciasSensorn:
+                            sendata = sendata + str(dispositivos[s*2]) + ";" + str(distance) + ":"
 
             #enviamos datos si tenemos algun sensor
             if sendata != "":
